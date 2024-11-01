@@ -1,7 +1,7 @@
 package com.hashtag.lasertag.activity;
 
-import com.hashtag.lasertag.activity.dtos.ActivityCreateRequest;
 import com.hashtag.lasertag.activity.dtos.ActivityPatchRequest;
+import com.hashtag.lasertag.activity.dtos.ActivityRequest;
 import com.hashtag.lasertag.activity.dtos.BundleActivityDto;
 import com.hashtag.lasertag.shared.exceptions.BadRequestException;
 import com.hashtag.lasertag.shared.exceptions.ErrorMessages;
@@ -39,11 +39,11 @@ public class ActivityService {
   }
 
   @Transactional
-  public Activity createActivity(ActivityCreateRequest activityCreateRequest) {
-    Activity activity = activityCreateRequest.toActivity();
+  public Activity createActivity(ActivityRequest activityRequest) {
+    Activity activity = activityRequest.toActivity();
 
     if (activity.isBundle()) {
-      List<ActivityInBundle> bundledActivities = activityCreateRequest.getBundledActivities()
+      List<ActivityInBundle> bundledActivities = activityRequest.getBundledActivities()
           .stream()
           .map(bundledActivityDto -> createBundledActivity(bundledActivityDto, activity))
           .toList();
@@ -52,6 +52,59 @@ public class ActivityService {
 
       activity.setShareable(false);
       activity.setBundledActivities(bundledActivities);
+    }
+
+    return activityRepository.save(activity);
+  }
+
+  @Transactional
+  public Activity updateActivity(ActivityRequest request) {
+    Activity activity = findActivityById(request.getId());
+
+    activity.setName(request.getName());
+    activity.setActive(request.isActive());
+    activity.setDuration(request.getDuration());
+    activity.setRecoveryTime(request.getRecoveryTime());
+    activity.setCapacity(request.getCapacity());
+    activity.setType(request.getType());
+    activity.setShareable(request.isShareable());
+    activity.setPrice(request.getPrice());
+
+    // Create a map to easily access ActivityInBundle by activity key (for removal)
+    Map<Activity, ActivityInBundle> newActivityInBundleMap = request.getBundledActivities()
+        .stream()
+        .map(newBundledActivityDto -> createBundledActivity(newBundledActivityDto, activity))
+        .collect(Collectors.toMap(
+            ActivityInBundle::getActivity,
+            bundledActivity -> bundledActivity
+        ));
+
+    // Validate if there is enough time for all activities included
+    validateIfBundledActivitiesCanFitInBundleDuration(
+        newActivityInBundleMap.values().stream().toList(),
+        activity
+    );
+
+    // Remove if no longer part of the bundle
+    activity.getBundledActivities()
+        .removeIf(o -> !newActivityInBundleMap.containsKey(o.getActivity()));
+
+    // Update existing ones with correct sizes
+    activity.getBundledActivities()
+        .forEach(activityInBundle -> {
+          activityInBundle.setSize(
+              newActivityInBundleMap.get(activityInBundle.getActivity()).getSize()
+          );
+          newActivityInBundleMap.remove(activityInBundle.getActivity());
+        });
+
+    // Add new ones
+    activity.getBundledActivities().addAll(newActivityInBundleMap.values());
+
+    if (activity.isBundle() && activity.getBundledActivities().isEmpty()) {
+      throw new InvalidOperationException(
+          ErrorMessages.BUNDLE_SHOULD_NOT_REMAIN_WITHOUT_BUNDLED_ITEMS
+      );
     }
 
     return activityRepository.save(activity);

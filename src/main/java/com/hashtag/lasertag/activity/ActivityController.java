@@ -1,6 +1,6 @@
 package com.hashtag.lasertag.activity;
 
-import com.hashtag.lasertag.activity.dtos.ActivityCreateRequest;
+import com.hashtag.lasertag.activity.dtos.ActivityRequest;
 import com.hashtag.lasertag.activity.dtos.ActivityPatchRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @Validated
 @RestController
 @RequestMapping("/api/v1/activities")
@@ -63,15 +62,23 @@ public class ActivityController {
   /**
    * Create a new activity.
    *
-   * @param activityCreateRequest the data for the new activity
+   * @param activityRequest the data for the new activity
    * @return ResponseEntity with the created activity
    */
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<Activity> createActivity(
-      @Valid @RequestBody ActivityCreateRequest activityCreateRequest) {
-    Activity createdActivity = activityService.createActivity(activityCreateRequest);
+      @Valid @RequestBody ActivityRequest activityRequest) {
+    Activity createdActivity = activityService.createActivity(activityRequest);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdActivity);
+  }
+
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PutMapping
+  public ResponseEntity<Activity> updateActivity(
+      @Valid @RequestBody ActivityRequest activityRequest) {
+    Activity updateActivity = activityService.updateActivity(activityRequest);
+    return ResponseEntity.status(HttpStatus.OK).body(updateActivity);
   }
 
   /**

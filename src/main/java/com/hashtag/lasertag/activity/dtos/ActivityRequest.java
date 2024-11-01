@@ -22,7 +22,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ActivityCreateRequest {
+public class ActivityRequest {
+
+    Long id;
 
     @NotNull
     @Size(min = 1, max = 100, message = "Activity should have a name")

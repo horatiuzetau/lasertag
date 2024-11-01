@@ -1,6 +1,7 @@
 package com.hashtag.lasertag.security;
 
 import com.hashtag.lasertag.security.dtos.AuthRequest;
+import com.hashtag.lasertag.security.dtos.AuthResponse;
 import com.hashtag.lasertag.security.jwt.JwtUtil;
 import com.hashtag.lasertag.security.models.Role;
 import com.hashtag.lasertag.security.models.User;
@@ -30,14 +31,19 @@ public class AuthService {
   final UserDetailsService userDetailsService;
   final JwtUtil jwtUtil;
 
-  public String login(AuthRequest authRequest) {
+  public AuthResponse login(AuthRequest authRequest) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             authRequest.getUsername(), authRequest.getPassword()
         )
     );
+
     UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-    return jwtUtil.generateToken(userDetails.getUsername());
+
+    return new AuthResponse(
+        authRequest.getUsername(),
+        jwtUtil.generateToken(userDetails.getUsername())
+    );
   }
 
   @Transactional

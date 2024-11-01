@@ -40,7 +40,10 @@ public class ClientService {
   }
 
   private Optional<Client> findByEmailOrPhone(String email, String phone) {
-    return clientRepository.findByEmailOrPhone(email, phone);
+    return clientRepository.findByEmailOrPhone(
+        Optional.ofNullable(email).orElse(""),
+        Optional.ofNullable(phone).orElse("")
+    );
   }
 
   private Client createClient(ClientCreateUpdateRequest clientCreateUpdateRequest) {

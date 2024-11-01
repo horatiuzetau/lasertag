@@ -1,8 +1,9 @@
 package com.hashtag.lasertag.security;
 
 import com.hashtag.lasertag.security.dtos.AuthRequest;
-import jakarta.validation.Valid;
+import com.hashtag.lasertag.security.dtos.AuthResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +19,12 @@ public class AuthController {
   final AuthService authService;
 
   @PostMapping("/login")
-  public String login(@RequestBody AuthRequest authRequest) {
-    return authService.login(authRequest);
+  public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    return ResponseEntity.ok(authService.login(authRequest));
   }
 
-  @PostMapping("/register")
-  public String register(@RequestBody @Valid AuthRequest authRequest) {
-    return authService.register(authRequest);
-  }
+//  @PostMapping("/register")
+//  public String register(@RequestBody @Valid AuthRequest authRequest) {
+//    return authService.register(authRequest);
+//  }
 }

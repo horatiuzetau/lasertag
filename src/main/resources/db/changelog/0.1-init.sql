@@ -92,12 +92,14 @@ create table slots
     "date"       date      not null,
     start_time   time      not null,
     end_time     time      not null,
-    status       varchar   not null check (status IN ('BOOKED', 'CANCELLED', 'CONFIRMED', 'BLOCKED')),
+    status       varchar   not null check (status IN ('BOOKED', 'CANCELLED', 'CONFIRMED', 'BLOCKED',
+                                                      'NON_ATTENDEE', 'COMPLETED')),
     booked_spots int       not null check (booked_spots >= 0),
     client_id    int,
     schedule_id  int,
     activity_id  int,
     bundle_id    int,
+    price        double precision,
     constraint fk_slots_to_clients foreign key (client_id) references clients (id),
     constraint fk_slots_to_schedules foreign key (schedule_id) references schedules (id),
     constraint fk_slots_to_services foreign key (activity_id) references activities (id),
@@ -112,10 +114,10 @@ create table roles
 
 create table users
 (
-    id                      serial primary key,
-    username                varchar(50)  not null unique,
-    password                varchar(255) not null,
-    role_id                 int,
+    id       serial primary key,
+    username varchar(50)  not null unique,
+    password varchar(255) not null,
+    role_id  int,
     constraint fk_users_to_roles foreign key (role_id) references roles (id)
 );
 
@@ -129,4 +131,4 @@ VALUES ('ADMIN');
 
 -- User
 INSERT INTO users(username, password, role_id)
-VALUES ('admin', '$2a$12$H/P.7s0UGtMubnBZ146QsuAe76.hmoOSnnwkviIYczloDym/seuc2', 1);
+VALUES ('admin', '$2a$12$ueBoE98k8NaHLh1qNocVxOvRkRDCNNlNJgdHLVx79mzzcYSOzsNU2', 1);

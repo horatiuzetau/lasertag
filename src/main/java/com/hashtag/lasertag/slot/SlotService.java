@@ -1,5 +1,6 @@
 package com.hashtag.lasertag.slot;
 
+import com.hashtag.lasertag.slot.dtos.AdminSlotResponseDto;
 import com.hashtag.lasertag.slot.dtos.SlotBatchCreateRequest;
 import com.hashtag.lasertag.slot.dtos.SlotCreateRequest;
 import com.hashtag.lasertag.slot.dtos.SlotDto;
@@ -44,8 +45,10 @@ public class SlotService {
   // teste unitare
   // teste integrate
 
-  public List<Slot> findAllSlots() {
-    return slotRepository.findAll();
+  public List<AdminSlotResponseDto> findAllSlots() {
+    return slotRepository.findAllNonCancelledSlots()
+        .stream().map(AdminSlotResponseDto::fromSlot)
+        .toList();
   }
 
   /**
@@ -180,7 +183,7 @@ public class SlotService {
     validateBookingAvailability(slot, activity.getCapacity());
 
     // Activity is BUNDLE -> create slot for each bundled slot
-    if (activity.isBundle()) {
+    if (activity.isBundle() && slotStatus != SlotStatus.BLOCKED) {
       validateBundleSlotPayload(slotDto, activity);
 
       for (var bundledSlotDto : slotDto.getBundledSlots()) {

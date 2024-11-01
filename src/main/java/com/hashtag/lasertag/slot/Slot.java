@@ -1,10 +1,10 @@
 package com.hashtag.lasertag.slot;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hashtag.lasertag.slot.enums.SlotStatus;
 import com.hashtag.lasertag.activity.Activity;
 import com.hashtag.lasertag.client.Client;
 import com.hashtag.lasertag.schedule.Schedule;
+import com.hashtag.lasertag.slot.enums.SlotStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,6 +73,9 @@ public class Slot {
   @Positive(message = "Booked spots must be greater than 0")
   int bookedSpots;
 
+  @Column(name = "price")
+  Double price;
+
   @ManyToOne
   @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "fk_slots_to_clients"))
   Client client;
@@ -96,14 +99,15 @@ public class Slot {
 
   public static Slot create(LocalDate date, LocalTime startTime, int bookedSpots, SlotStatus status,
       Activity activity, Schedule schedule, Client client, Slot bundleSlot) {
-
     Slot slot = new Slot();
     slot.setDate(date);
     slot.setStartTime(startTime);
     slot.setEndTime(startTime.plusMinutes(activity.getDuration()));
-    slot.setBookedSpots(bookedSpots);
+    slot.setBookedSpots(status == SlotStatus.BLOCKED || !activity.isShareable()
+        ? activity.getCapacity() : bookedSpots);
     slot.setStatus(status);
 
+    slot.setPrice(activity.getPrice());
     slot.setBundleSlot(bundleSlot);
     slot.setClient(client);
     slot.setSchedule(schedule);

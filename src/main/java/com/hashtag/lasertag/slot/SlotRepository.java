@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 
+  @Query("SELECT s FROM Slot s WHERE s.status != 'CANCELLED'")
+  List<Slot> findAllNonCancelledSlots();
+
   @Query("""
       SELECT SUM(s.bookedSpots)
       FROM Slot s
@@ -22,7 +25,7 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
             OR (:endTime > s.startTime AND :endTime < s.endTime))
       """)
   Optional<Integer> getSumOfBookedSpotsForOverlappingTime(
-      Long id, LocalDate date, LocalTime startTime, LocalTime endTime,  Long activityId
+      Long id, LocalDate date, LocalTime startTime, LocalTime endTime, Long activityId
   );
 
   @Query("""

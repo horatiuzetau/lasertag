@@ -3,6 +3,10 @@ package com.hashtag.lasertag.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -10,10 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtUtil {
 
-  private final String SECRET_KEY = "your_secret_key";
-  private final long EXPIRATION_TIME = 1000 * 60 * 60 * 8; // 8 hour
+  @Autowired
+  @Value("${app.jwt.key}")
+  String SECRET_KEY;
+  final long EXPIRATION_TIME = 1000 * 60 * 60 * 8; // 8 hour
 
   public String generateToken(String username) {
     Map<String, Object> claims = new HashMap<>();

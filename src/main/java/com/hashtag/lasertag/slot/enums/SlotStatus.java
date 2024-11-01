@@ -3,11 +3,12 @@ package com.hashtag.lasertag.slot.enums;
 import java.util.List;
 
 public enum SlotStatus {
-  BOOKED, CONFIRMED, BLOCKED, CANCELLED, NON_ATTENDEE;
+  COMPLETED, BOOKED, CONFIRMED, BLOCKED, CANCELLED, NON_ATTENDEE;
 
   public static boolean isValidSlotStatusUpdate(SlotStatus oldStatus, SlotStatus newStatus) {
-    return (oldStatus == BOOKED && List.of(CONFIRMED, CANCELLED).contains(newStatus))
-        || (List.of(BLOCKED, CONFIRMED).contains(oldStatus) && newStatus == CANCELLED)
-        || (List.of(BOOKED, CONFIRMED).contains(oldStatus) && newStatus == NON_ATTENDEE);
+    return (oldStatus == BOOKED && List.of(CONFIRMED, COMPLETED, NON_ATTENDEE, CANCELLED)
+        .contains(newStatus))
+        || (oldStatus == CONFIRMED && List.of(COMPLETED, NON_ATTENDEE, CANCELLED)
+        .contains(newStatus));
   }
 }

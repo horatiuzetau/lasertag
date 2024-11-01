@@ -4,6 +4,7 @@ import com.hashtag.lasertag.setting.SettingService;
 import com.hashtag.lasertag.setting.SettingType;
 import com.hashtag.lasertag.setting.exceptions.ServiceUnavailableException;
 import com.hashtag.lasertag.shared.exceptions.ErrorMessages;
+import com.hashtag.lasertag.slot.dtos.AdminSlotResponseDto;
 import com.hashtag.lasertag.slot.dtos.SlotBatchCreateRequest;
 import com.hashtag.lasertag.slot.dtos.SlotDto;
 import com.hashtag.lasertag.slot.dtos.SlotPatchRequest;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @Validated
 @RestController
 @RequestMapping("/api/v1/slots")
@@ -41,9 +40,8 @@ public class SlotController {
    */
   @GetMapping
   @PreAuthorize("hasRole('ROLE_ADMIN')")
-  public ResponseEntity<List<Slot>> getAllSlots() {
-    List<Slot> slots = slotService.findAllSlots();
-    return ResponseEntity.ok(slots);
+  public ResponseEntity<List<AdminSlotResponseDto>> getAllSlots() {
+    return ResponseEntity.ok(slotService.findAllSlots());
   }
 
   /**
@@ -53,7 +51,7 @@ public class SlotController {
    * @return the created slot
    */
   @PostMapping("/batch")
-  public ResponseEntity<List<Slot>> bookSlot(
+  public ResponseEntity<List<Slot>> bookSlots(
       @Valid @RequestBody SlotBatchCreateRequest slotBatchCreateRequest) {
 
     validateServerAvailability();
@@ -84,7 +82,7 @@ public class SlotController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   public ResponseEntity<Slot> blockSlot(@Valid @RequestBody SlotDto slotDto) {
     Slot blockedSlot = slotService.blockSlot(slotDto);
-    return ResponseEntity.ok(blockedSlot);
+    return ResponseEntity.status(HttpStatus.CREATED).body(blockedSlot);
   }
 
   /**

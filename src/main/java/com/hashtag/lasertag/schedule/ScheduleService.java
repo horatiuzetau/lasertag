@@ -57,7 +57,12 @@ public class ScheduleService {
    */
   public Schedule createSchedule(ScheduleCreateUpdateRequest scheduleCreateUpdateRequest) {
     validateSchedule(scheduleCreateUpdateRequest);
-    return scheduleRepository.save(scheduleCreateUpdateRequest.toSchedule());
+    Schedule schedule = scheduleCreateUpdateRequest.toSchedule();
+    if (scheduleRepository.findAll().isEmpty()) {
+      schedule.setMain(true);
+      schedule.setActive(true);
+    }
+    return scheduleRepository.save(schedule);
   }
 
   /**
