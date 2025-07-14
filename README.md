@@ -98,3 +98,6 @@ This API was designed to manage reservations of a local Laser Tag centre in Focs
     1. Get all slots and copy the ID of the slot you want to cancel (`status` is `BOOKED`)
     2. Patch Slot, using the previously copied ID
     3. Get all slots again, to verify that the slot was cancelled *(it's not showing anymore in the response, because the status got updated to `CANCELLED`)*
+6. **[AUTH REQUIRED] Trigger Error Handling**
+    1. Update setting "booking.enabled" to false
+    2. Perform a Create Slot request to receive 503 - the error is going through the GlobalExceptionHandler
