@@ -22,7 +22,6 @@ import com.hashtag.lasertag.slot.enums.SlotStatus;
 import com.hashtag.lasertag.slot.exceptions.UnavailableSpotException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,6 @@ public class SlotServiceTest {
     LocalTime startTime = LocalTime.of(10, 0);
     var slotDto = createSlotDto(bookedSpots, activityId, startTime);
     var clientCreateUpdateRequest = createClientCreateUpdateRequest(
-        true, true, true
     );
     var slotBatchCreateRequest = new SlotBatchCreateRequest(
         List.of(slotDto), clientCreateUpdateRequest
@@ -121,7 +119,6 @@ public class SlotServiceTest {
     LocalTime startTime = LocalTime.of(10, 0);
     var slotDto = createSlotDto(bookedSpots, activityId, startTime);
     var clientCreateUpdateRequest = createClientCreateUpdateRequest(
-        true, true, true
     );
     var slotBatchCreateRequest = new SlotBatchCreateRequest(
         List.of(slotDto), clientCreateUpdateRequest
@@ -170,8 +167,8 @@ public class SlotServiceTest {
     schedule.setMain(true);
     schedule.setName("Default Schedule");
     schedule.setDescription("Description");
-    schedule.setMonday(Arrays.asList(new TimeRange(LocalTime.of(8, 0), LocalTime.of(14, 0))));
-    schedule.setTuesday(Arrays.asList(new TimeRange(LocalTime.of(12, 0), LocalTime.of(22, 0))));
+    schedule.setMonday(List.of(new TimeRange(LocalTime.of(8, 0), LocalTime.of(14, 0))));
+    schedule.setTuesday(List.of(new TimeRange(LocalTime.of(12, 0), LocalTime.of(22, 0))));
     return schedule;
   }
 
@@ -194,17 +191,16 @@ public class SlotServiceTest {
     return client;
   }
 
-  private ClientCreateUpdateRequest createClientCreateUpdateRequest(boolean gdpr,
-      boolean subscribedToNewsletter, boolean termsAndConditions) {
+  private ClientCreateUpdateRequest createClientCreateUpdateRequest() {
 
     ClientCreateUpdateRequest clientRequest = new ClientCreateUpdateRequest();
     clientRequest.setPhone("0777777777");
     clientRequest.setEmail("test@test.com");
     clientRequest.setFirstName("First Name");
     clientRequest.setLastName("Last Name");
-    clientRequest.setGdpr(gdpr);
-    clientRequest.setSubscribedToNewsletter(subscribedToNewsletter);
-    clientRequest.setTermsAndConditions(termsAndConditions);
+    clientRequest.setGdpr(true);
+    clientRequest.setSubscribedToNewsletter(true);
+    clientRequest.setTermsAndConditions(true);
     return clientRequest;
   }
 
