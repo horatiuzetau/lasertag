@@ -17,33 +17,27 @@ import com.hashtag.lasertag.activity.ActivityService;
 import com.hashtag.lasertag.client.ClientService;
 import com.hashtag.lasertag.schedule.ScheduleService;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SlotService {
+
+  final String LOG_PREFIX = "SLOT SERVICE";
 
   final SlotRepository slotRepository;
   final ClientService clientService;
   final ScheduleService scheduleService;
   final ActivityService activityService;
-
-  // get all slots for period of time (start date / end date) - return as map where key is date + timerange and vaue is slot
-  // get all slots by client name // admin
-  // exceptions
-  // logs
-  // validations si exceptii in romana
-  // testare manuala
-  // frontend controller - return schedule, time periods / days - big algorithm for matching available / booked slots / spots
-  // security
-  // teste unitare
-  // teste integrate
 
   public List<AdminSlotResponseDto> findAllSlots() {
     return slotRepository.findAllNonCancelledSlots()
@@ -59,6 +53,8 @@ public class SlotService {
    */
   @Transactional
   public List<Slot> bookSlots(SlotBatchCreateRequest slotBatchCreateRequest) {
+    log.info("{} Booking {} slots", LOG_PREFIX,
+        Optional.ofNullable(slotBatchCreateRequest.getSlots()).map(List::size).orElse(0));
     Client client = clientService.getOrCreateClient(slotBatchCreateRequest.getClient());
 
     List<Slot> bookedSlots = slotBatchCreateRequest.getSlots().stream()
@@ -89,6 +85,7 @@ public class SlotService {
    */
   @Transactional
   public Slot blockSlot(SlotDto slotDto) {
+    log.info("{} Blocking slot, starting at {}", LOG_PREFIX, slotDto.getStartTime());
     Slot slot = createSlot(slotDto, SlotStatus.BLOCKED, null);
     return slotRepository.save(slot);
   }
@@ -101,6 +98,7 @@ public class SlotService {
    */
   @Transactional
   public void patchSlot(Long id, SlotPatchRequest patchSlotDto) {
+    log.info("{} Patching slot (id: {})", LOG_PREFIX, id);
     Slot slot = slotRepository.findById(id).orElseThrow();
 
     if (patchSlotDto.getStatus() != null) {
