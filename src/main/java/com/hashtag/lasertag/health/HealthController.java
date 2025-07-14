@@ -1,7 +1,7 @@
 package com.hashtag.lasertag.health;
 
 import com.hashtag.lasertag.setting.SettingService;
-import com.hashtag.lasertag.setting.SettingType;
+import com.hashtag.lasertag.setting.enums.SettingType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

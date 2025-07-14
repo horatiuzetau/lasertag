@@ -1,4 +1,4 @@
-package com.hashtag.lasertag.setting;
+package com.hashtag.lasertag.setting.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

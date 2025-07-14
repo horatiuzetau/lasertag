@@ -1,7 +1,7 @@
 package com.hashtag.lasertag.slot;
 
 import com.hashtag.lasertag.setting.SettingService;
-import com.hashtag.lasertag.setting.SettingType;
+import com.hashtag.lasertag.setting.enums.SettingType;
 import com.hashtag.lasertag.setting.exceptions.ServiceUnavailableException;
 import com.hashtag.lasertag.shared.exceptions.ErrorMessages;
 import com.hashtag.lasertag.slot.dtos.AdminSlotResponseDto;

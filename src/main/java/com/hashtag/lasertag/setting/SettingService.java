@@ -1,5 +1,6 @@
 package com.hashtag.lasertag.setting;
 
+import com.hashtag.lasertag.setting.enums.SettingType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
