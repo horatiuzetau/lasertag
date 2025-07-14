@@ -29,6 +29,8 @@ This API was designed to manage reservations of a local Laser Tag centre in Focs
 - **JPA Auditing** for audit columns (`createdAt` / `updatedAt`)
 - **Lombok** for generating getters, setters, constructors, and field defaults
 - **Docker** - the docker-compose.yml was used to deploy the API on DigitalOcean
+- **JUnit and Mockito** - for unit tests
+- **SQL** - for some custom / complex queries
 
 ---
 
@@ -36,6 +38,7 @@ This API was designed to manage reservations of a local Laser Tag centre in Focs
 
 - Application is still (and will remain) in the MVP state. Exception handling was not implemented, because all the validations and exceptions are handled by the front-end. We needed a working API that can be used as soon as possible.
 - For the same reason (desire of fast delivery and acceptance for corrupted data), tests were not created.
+- I did not have time to write tests for bundled scenario 
 
 ---
 
